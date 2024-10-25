@@ -1,12 +1,13 @@
 <!-- The entire frontend has been copy-pasted, with some minor changes -->
- <!-- As, i'm focusing mainly on backend & translation server only. -->
+<!-- As, i'm focusing mainly on backend & translation server only. -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Translator Service</title>
+    <title>Language Translator Service</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body,
@@ -22,27 +23,9 @@
             flex: 1;
         }
 
-        .navbar {
-            background-color: #34568B;
-        }
-
-        .btn-primary {
-            background-color: #88B04B;
-            border-color: #88B04B;
-        }
-
-        .form-label {
-            color: #34568B;
-        }
-
-        .logo {
-            max-width: 30%;
-            height: auto;
-            padding: 20px;
-        }
 
         .footer {
-            color: black;
+            color: grey;
             text-align: center;
             padding: 10px 0;
             width: 100%;
@@ -67,79 +50,193 @@
             text-align: center;
             margin-top: 20px;
         }
+
+        #progress-container {
+            display: none;
+        }
     </style>
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
+<body class="bg-dark">
+    <nav class="navbar navbar-expand-lg bg-dark text-light">
         <div class="container">
-            <div class="navbar-text text-light">
-                Dark Technologies pvt. limited...
+
+            <a class="navbar-brand text-light fw-bold" href="#">Language Translator</a>
+
+            <!-- Source Code Button with Icon -->
+            <a class="btn btn-outline-success ms-auto" href="http://www.github.com/darkdk123">
+                <img src="https://cdn-icons-png.flaticon.com/512/12868/12868746.png" width="20" height="20"
+                    class="me-2" />
+                Source Code
+            </a>
+
+            <!-- Dropdown for Contact with Icons -->
+            <div class="dropdown ms-3">
+                <button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Contact
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center text-light"
+                            href="mailto:dipeshrathore122@gmail.com">
+                            <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" width="20" height="20"
+                                class="me-2" />
+                            Email
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center text-light"
+                            href="https://www.linkedin.com/in/dipeshrathore1">
+                            <img src="https://cdn-icons-png.flaticon.com/512/145/145807.png" width="20" height="20"
+                                class="me-2" />
+                            LinkedIn
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center text-light"
+                            href="http://www.github.com/darkdk123">
+                            <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" width="20" height="20"
+                                class="me-2" />
+                            GitHub
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <a class="navbar-brand mx-auto" href="#">Translator Service</a>
+
         </div>
     </nav>
 
-    <div class="content">
-        <div class="container form-container">
+
+
+    <div class="content bg-dark">
+        <div class="container form-container text-light">
+            <h1 class="text-center mt-4 mb-3">Translation Service</h1>
             <div class="form-box">
-                <label for="text" class="form-label">Text to Translate</label>
-                <textarea id="text" class="form-control" rows="10"></textarea>
+                <label for="textToTranslate" class="form-label">Text to Translate</label>
+                <textarea id="textToTranslate" class="form-control bg-dark text-light" rows="10"></textarea>
             </div>
             <div class="form-box">
-                <label for="languages" class="form-label">Languages</label>
-                <input id="languages" class="form-control" type="text" placeholder="e.g., english, german, russian">
-                <small class="form-text text-muted">Write the languages you want to translate your text to, separated by
-                    commas.</small>
+                <label for="languages" class="form-label">Languages (comma-separated)</label>
+                <input id="languages" class="form-control bg-dark text-light" type="text"
+                    placeholder="e.g., english, german, russian">
             </div>
             <div class="btn-container">
-                <button class="btn btn-primary" onclick="translateText()">Translate</button>
+                <button class="btn btn-success" onclick="submitTranslation()">Translate</button>
             </div>
+            <div class="mt-4" id="results" style="display: none;">
+                <h3>Translation Results</h3>
+                <pre id="translationResults"></pre> <!-- Required for the event driven arch. -->
+            </div>
+
+            <div class="mt-4" id="progress-container">
+                <h4 id="progress-text">Translation in Progress...</h4>
+                <div class="progress spinner-border text-primary">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar">Loading...
+                    </div>
+                </div>
+                <p>Please wait while we translate your text.</p>
+            </div>
+
+            <div class="mt-4 form-box">
+                <label for="search-id">Check Translation by ID</label>
+                <input type="number" id="search-id" class="form-control bg-dark text-light mt-2"
+                    aria-placeholder="Enter Translation ID"></input>
+                <div class="btn-container">
+                    <button id="search-button" class="btn btn-primary m-2" onclick="checkTranslationStatus()">Check
+                        Status</button>
+                    <button id="content-button" class="btn btn-success m-2" onclick="checkTranslationContent()">Check
+                        Content</button>
+                </div>
+            </div>
+
+
+            <div class="mt-4" id="status-container" style="display: none;">
+                <h4>Translation Status</h4>
+                <pre id="statusResult"></pre>
+            </div>
+
+            <div class="mt-4" id="content-container" style="display: none;">
+                <h4>Translation Content</h4>
+                <pre id="contentResult"></pre>
+            </div>
+
         </div>
     </div>
 
-    <div class="footer">
+
+    <div class="footer bg-dark">
         &copy; 2024 Translator Service
     </div>
 
     <script>
-        async function translateText() {
+        async function submitTranslation() {
             // Extract the text and languages from the form
-            var text_for_translation = document.getElementById('text').value;
-            var languages_chosen = document.getElementById('languages').value;
+            const input_text = document.getElementById('textToTranslate').value;
+            const languages = document.getElementById('languages').value.split(',').map(lang => lang.trim());
 
-            // Prepare the payload
-            var payload = {
-                text: text_for_translation,
-                languages: languages_chosen
-            };
+            if (!text || languages === 0 || languages[0]) {
+                alert("Please provide both text and target language.");
+                return;
+            }
+            const progressBar = document.getElementbyId('progress-bar');
+            const progressText = document.getElementbyId('progress-text');
+            progressBar.classList.remove('bg-success');
+            progressBar.classList.add('bg-primary');
+            progressBar.style.width = '0%';
+            proggressText.textContent = 'Translation in progress...';
 
             try {
-                // Execute the POST request to the translation endpoint
-                const response = await fetch('http://localhost:8000/translate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
+                const response = await axios.post('/translate', {
+                    text: input_text,
+                    languages: languages
                 });
 
-                // Check if the response is OK
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                document.getElementById('progress-container').style.display = 'block';
+                document.getElementById('results').style.display = 'none';
+                document.getElementById('status-container').style.display = 'none';
+                document.getElementById('content-container').style.display = 'none';
+                let translationResult = null;
+                let progress = 0;
+                while (progress < 100) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    const resultResponse = await axios.get('localhost:8000/translate)${taskId}');
+                    translationResult = resultResponse.data;
+                    if (translationResult == 'completed') {
+                        progress = 100;
+                    } else {
+                        progres.style.width = `50%`;
+                    }
                 }
 
-                // Parse and handle the response
-                const result = await response.json();
-                alert('Translation request submitted. ID: ' + result.id);
-                window.location.href = '/translate/' + result.id;
+                progressBar.classList.remove('bg-primary');
+                progressBar.classList.add('bg-success');
+                progressBar.style.width = `100%`;
+                progressText.textContent = 'Translation complete!';
+                document.getElementById('translationResults').textContent = JSON.stringify(translationResult);
+                document.getElementById('results').style.display = 'block';
+
             } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to submit translation request.');
+                console.error("Error submitting translation", error);
+                alert("An error occured while translating, please try again.")
             }
-        }
+
+            // We want to the search functionality component
+            //TODO
+            async function checkTranslationStatus() {
+                return;
+            }
+            //TODO
+            async function checkTranslationContent() {
+                return;
+            }
+        };
+
     </script>
+
+    <!-- Add Bootstrap JS for dropdown functionality -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
 </body>
 
 </html>
