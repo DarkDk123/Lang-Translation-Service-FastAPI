@@ -6,8 +6,10 @@ This file contains the Database initializations.
 """
 
 import os
+from typing import Generator
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
+from models import Base  # Imported for 'main' file
 
 
 # Load environment variables
@@ -27,5 +29,17 @@ engine = create_engine(SQLALCHEMY_DB_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+# This will create new session & close it on each request! (Dependency Injection)
+def get_db() -> Generator[Session, None, None]:
+    """
+    Returns a database session. (Automatically closes with generator)
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
 # For wildcard imports | Not needed, but learning
-__all__ = ["engine", "SessionLocal"]
+__all__ = ["engine", "SessionLocal", "get_db", "Base"]
