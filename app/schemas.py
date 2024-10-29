@@ -27,4 +27,3 @@ class TranslationStatusResponse(BaseModel):
     task_id: int
     status: str
     translations: dict[str, str]
-

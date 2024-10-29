@@ -20,9 +20,8 @@ class TranslationTasks(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     text = Column(Text, nullable=False)
     languages = Column(JSON, nullable=False)
-    status  = Column(String, default="pending")
+    status = Column(String, default="pending")
     translation: Column[dict] = Column(JSON, default={})
-
 
     # SQLModel ORM is an extension of SQLAlchemy ORM
     # Provides better type support with Pydantic. I read a lot through this...
