@@ -22,8 +22,9 @@ class TaskResponse(BaseModel):
 
 
 class TranslationStatusResponse(BaseModel):
-    """Response schema for ---"""
+    """Response schema for task status"""
 
     task_id: int
     status: str
     translations: dict[str, str]
+
