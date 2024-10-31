@@ -19,7 +19,7 @@ class TranslationTasks(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     text = Column(Text, nullable=False)
-    languages = Column(JSON, nullable=False)
+    languages = Column(String, nullable=False)
     status = Column(String, default="pending")
     translation: Column[dict] = Column(JSON, default={})
 

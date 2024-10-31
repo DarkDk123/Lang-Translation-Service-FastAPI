@@ -17,7 +17,11 @@ def create_trans_task(
 
     # Create new task
     task = models.TranslationTasks(
-        id=0, text="", languages="", status="pending", translation=""
+        # Language list as string
+        text=text,
+        languages=",".join(languages),
+        status="pending",
+        translation={},
     )
 
     # Add & commit to database
@@ -30,28 +34,38 @@ def create_trans_task(
 def get_task(dbSession: Session, task_id: int):
     """Get a translation task by ID"""
 
-    task = dbSession.execute(
+    rows = dbSession.execute(
         select(models.TranslationTasks).where(
             models.TranslationTasks.id == task_id
         )  # Using statement.
-    )
+    ).first()
 
-    return task.first()  # Either None or a single row !
+    # If result row exits
+    if rows:
+        # No need to convert lang str to list.
+        # Return direct results from DB
+        return rows[0]
+
+    return None  # No Task !
 
 
 def update_translation_task(
     dbSession: Session, task_id: int, translations: dict[str, str]
 ):
     """updated a task on completion with final translations"""
-    task = dbSession.execute(
+
+    rows = dbSession.execute(
         select(models.TranslationTasks).where(models.TranslationTasks.id == task_id)
     ).first()
 
     # No task found, server error to update!!
-    if not task:
+    if not rows:
         raise Exception("Updating a task that doesn't Exists!!")
 
+    
+    task = rows[0]
     task.translations = translations
+    task.status = "Completed"
 
     # Save updated task in DB
     dbSession.commit()

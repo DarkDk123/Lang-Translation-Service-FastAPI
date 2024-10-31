@@ -196,6 +196,9 @@ pyrightconfig.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
+# Sqlite database
+*.db
+
 # Local History for Visual Studio Code
 .history/
 

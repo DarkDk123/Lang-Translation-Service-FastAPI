@@ -13,15 +13,17 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, BackgroundTasks, Depends
 from fastapi.responses import HTMLResponse
+from fastapi.exceptions import HTTPException
 
 from fastapi.templating import Jinja2Templates  # For HTML templates
 from fastapi.middleware.cors import CORSMiddleware
 
 from models import TranslationTasks
-from schemas import TranslationRequest, TaskResponse
+from schemas import TranslationRequest, TaskResponse, TranslationStatusResponse
 from database import get_db, Base, engine, Session
 
 import crud
+from util import perform_trans, invalid_languages
 
 # Adding Jinja2 templates
 templates: Jinja2Templates = Jinja2Templates(directory="templates")  # On given path
@@ -57,15 +59,41 @@ async def translate(
         dbSession, request.text, request.languages
     )
 
+    # Check valid languages
+    if inv_lang := invalid_languages(request.languages):
+        raise HTTPException(
+            status_code=400,
+            detail={"msg": "Invalid languages", "invalid languages": inv_lang},
+        )
+
     # perform translation in background
     bg_tasks.add_task(
-        perform_trans,
-        task.id,
-        request.text,
-        request.languages,
+        perform_trans, task.id, request.text, request.languages, dbSession
     )
 
-    return task.id
+    return {"task_id": task.id}
+
+
+@app.get("/translate/status/{task_id}", response_model=TranslationStatusResponse)
+async def get_content_status(
+    task_id: int,
+    dbSession: Annotated[Session, Depends(get_db)],
+):
+    # Get task from Database
+    task = crud.get_task(dbSession, task_id)
+
+    # No task found, server error to update!!
+    if not task:
+        raise HTTPException(
+            status_code=404, detail="You're referring to a Task that doesn't Exists!!"
+        )
+
+    # This will get truncated to response schema
+    return {
+        "task_id": task.id,
+        "status": task.status,
+        "translations": task.translation,
+    }
 
 
 # Enable CORS mainly for development.
