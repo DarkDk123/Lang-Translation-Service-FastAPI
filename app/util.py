@@ -7,6 +7,8 @@ Utility functions for the app having API integrations for the translation task.
 
 from crud import update_translation_task
 from sqlalchemy.orm import Session
+from language_map import LANGUAGE_MAPPING
+
 
 
 async def perform_trans(task_id, text: str, languages: list[str], dbSession: Session):
@@ -30,5 +32,5 @@ async def _translate(text: str, language: str) -> str:
 
 
 def invalid_languages(languages: list[str]):
-    # TODO: Check valid languages based on Translation Model
-    return []
+    global LANGUAGE_MAPPING
+    return [lang for lang in languages if lang not in LANGUAGE_MAPPING.keys()]
