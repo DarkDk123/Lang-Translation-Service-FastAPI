@@ -54,17 +54,21 @@ async def translate(
     dbSession: Annotated[Session, Depends(get_db)],
     bg_tasks: BackgroundTasks,
 ):
-    # Create new task
-    task: TranslationTasks = crud.create_trans_task(
-        dbSession, request.text, request.languages
-    )
+
+    # Convert languages to lowercase
+    request.languages = [lang.lower() for lang in request.languages]
 
     # Check valid languages
     if inv_lang := invalid_languages(request.languages):
         raise HTTPException(
             status_code=400,
-            detail={"msg": "Invalid languages", "invalid languages": inv_lang},
+            detail={"msg": "Invalid languages", "invalid_languages": inv_lang},
         )
+
+    # Create new task
+    task: TranslationTasks = crud.create_trans_task(
+        dbSession, request.text, request.languages
+    )
 
     # perform translation in background
     bg_tasks.add_task(

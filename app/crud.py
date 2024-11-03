@@ -64,8 +64,8 @@ def update_translation_task(
 
     
     task = rows[0]
-    task.translations = translations
-    task.status = "Completed"
+    task.translation = translations
+    task.status = "completed"
 
     # Save updated task in DB
     dbSession.commit()
