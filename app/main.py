@@ -96,6 +96,7 @@ async def get_content_status(
     return {
         "task_id": task.id,
         "status": task.status,
+        "text": task.text,
         "translations": task.translation,
     }
 
