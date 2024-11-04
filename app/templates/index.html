@@ -229,8 +229,13 @@
                 document.getElementById('results').style.display = 'block';
 
             } catch (error) {
-                console.error("Error submitting translation", error);
-                alert("An error occurred while translating, please try again.");
+                console.error("Error submitting translation", error.response.data.detail.invalid_languages);
+                
+                if (error.response && error.response.status === 400) {
+                    alert(`Error: Invalid languages - ${error.response.data.detail.invalid_languages}.`);
+                } else {
+                    alert("An error occurred while translating, please try again.");
+                }
             }
         };
 
