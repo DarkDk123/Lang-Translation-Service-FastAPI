@@ -107,8 +107,6 @@
         </div>
     </nav>
 
-
-
     <div class="content bg-dark">
         <div class="container form-container text-light">
             <h1 class="text-center mt-4 mb-3">Translation Service</h1>
@@ -120,6 +118,17 @@
                 <label for="languages" class="form-label">Languages (comma-separated)</label>
                 <input id="languages" class="form-control bg-dark text-light" type="text"
                     placeholder="e.g., english, german, russian">
+            </div>
+            <div class="form-box mt-2">
+                <!-- <label for="languages-list-toggle" class="form-label">Available Languages</label> -->
+                <button id="languages-list-toggle" class="btn btn-secondary form-control bg-dark text-light"
+                    type="button" data-bs-toggle="collapse" data-bs-target="#languages-list" aria-expanded="false">
+                    Show Available Languages
+                </button>
+                <div id="languages-list" class="collapse">
+                    <textarea class="form-control bg-dark text-light mt-2" rows="10" readonly>{% for lang in languages %}{{ lang | capitalize }}
+{% endfor %}</textarea>
+                </div>
             </div>
             <div class="btn-container">
                 <button class="btn btn-success" onclick="submitTranslation()">Translate</button>
@@ -145,11 +154,8 @@
                 <div class="btn-container">
                     <button id="search-button" class="btn btn-primary m-2" onclick="checkTranslationStatus()">Check
                         Status</button>
-                    <button id="content-button" class="btn btn-success m-2" onclick="checkTranslationContent()">Check
-                        Content</button>
                 </div>
             </div>
-
 
             <div class="mt-4" id="status-container" style="display: none;">
                 <h4>Translation Status</h4>
@@ -164,27 +170,31 @@
         </div>
     </div>
 
-
     <div class="footer bg-dark">
-        &copy; 2024 Translator Service
+        &copy; {{date}} @ Translator Service ❤️‍🔥
     </div>
 
     <script>
         async function submitTranslation() {
             // Extract the text and languages from the form
             const input_text = document.getElementById('textToTranslate').value;
-            const languages = document.getElementById('languages').value.split(',').map(lang => lang.trim());
+            const languages = document.getElementById('languages').value
+                .trim()
+                .split(',')
+                .map(lang => lang.trim())
+                .filter(lang => lang !== '');
 
-            if (!text || languages === 0 || languages[0]) {
+            if (!input_text || languages === 0 || languages[0] === "") {
                 alert("Please provide both text and target language.");
                 return;
             }
-            const progressBar = document.getElementbyId('progress-bar');
-            const progressText = document.getElementbyId('progress-text');
+
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
             progressBar.classList.remove('bg-success');
             progressBar.classList.add('bg-primary');
             progressBar.style.width = '0%';
-            proggressText.textContent = 'Translation in progress...';
+            progressText.textContent = 'Translation in progress...';
 
             try {
                 const response = await axios.post('/translate', {
@@ -192,20 +202,22 @@
                     languages: languages
                 });
 
+                const taskId = response.data.task_id;
                 document.getElementById('progress-container').style.display = 'block';
                 document.getElementById('results').style.display = 'none';
                 document.getElementById('status-container').style.display = 'none';
                 document.getElementById('content-container').style.display = 'none';
                 let translationResult = null;
                 let progress = 0;
+
                 while (progress < 100) {
                     await new Promise(resolve => setTimeout(resolve, 1000));
-                    const resultResponse = await axios.get('localhost:8000/translate)${taskId}');
+                    const resultResponse = await axios.get(`/translate/status/${taskId}`);
                     translationResult = resultResponse.data;
-                    if (translationResult == 'completed') {
+                    if (translationResult.status === 'completed') {
                         progress = 100;
                     } else {
-                        progres.style.width = `50%`;
+                        progressBar.style.width = `50%`;
                     }
                 }
 
@@ -213,25 +225,36 @@
                 progressBar.classList.add('bg-success');
                 progressBar.style.width = `100%`;
                 progressText.textContent = 'Translation complete!';
-                document.getElementById('translationResults').textContent = JSON.stringify(translationResult);
+                document.getElementById('translationResults').textContent = JSON.stringify(translationResult.translations, null, 2);
                 document.getElementById('results').style.display = 'block';
 
             } catch (error) {
                 console.error("Error submitting translation", error);
-                alert("An error occured while translating, please try again.")
-            }
-
-            // We want to the search functionality component
-            //TODO
-            async function checkTranslationStatus() {
-                return;
-            }
-            //TODO
-            async function checkTranslationContent() {
-                return;
+                alert("An error occurred while translating, please try again.");
             }
         };
 
+        // We want to the search functionality component
+        window.checkTranslationStatus = async function () {
+            const searchId = document.getElementById('search-id').value;
+            if (!searchId) {
+                alert("Please enter a valid task ID.");
+                return;
+            }
+
+            try {
+                const response = await axios.get(`/translate/status/${searchId}`);
+                const translationResult = response.data;
+                document.getElementById('statusResult').textContent = JSON.stringify(translationResult, null, 2);
+                document.getElementById('status-container').style.display = 'block';
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    alert("No task found with given ID");
+                } else {
+                    alert("An error occurred while checking translation status. Please try again.");
+                }
+            }
+        }
     </script>
 
     <!-- Add Bootstrap JS for dropdown functionality -->

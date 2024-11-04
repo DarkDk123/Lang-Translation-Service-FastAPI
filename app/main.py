@@ -24,6 +24,7 @@ from database import get_db, Base, engine, Session
 
 import crud
 from util import perform_trans, invalid_languages
+from language_map import LANGUAGE_MAPPING
 
 # Adding Jinja2 templates
 templates: Jinja2Templates = Jinja2Templates(directory="templates")  # On given path
@@ -44,7 +45,9 @@ app = FastAPI(lifespan=lifespan)
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse(
-        "index.html", {"request": request, "message": "Hello World"}
+        request=request,
+        name="index.html",
+        context={"languages": LANGUAGE_MAPPING.keys()},
     )
 
 
