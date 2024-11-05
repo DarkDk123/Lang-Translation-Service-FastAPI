@@ -25,11 +25,11 @@ This service is built using FastAPI and provides an API for translating text bet
 
 ## Components List
 
-- **FastAPI**: The web framework used to build the API service.
-- **Google Translate API**: Provides translation capabilities.
-- **SQLAlchemy**: ORM used for database operations.
-- **Jinja2**: Templating engine for rendering HTML pages.
-- **Bootstrap**: CSS framework for styling the frontend.
+- **[FastAPI](https://github.com/tiangolo/fastapi)**: The web framework used to build the API service.
+- **[googletrans](https://pypi.org/project/googletrans/)**: Provides translation capabilities using the Google Translate API.
+- **[SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy)**: ORM used for database operations.
+- **[Jinja2](https://github.com/pallets/jinja)**: Templating engine for rendering HTML pages.
+- **[Bootstrap](https://getbootstrap.com/)**: CSS framework for styling the frontend.
 
 ## How to Use Locally
 

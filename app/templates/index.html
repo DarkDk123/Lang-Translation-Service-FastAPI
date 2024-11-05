@@ -145,7 +145,7 @@
                         role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
                     </div>
                 </div>
-                <p class="text-center">Please wait while we translate your text.</p>
+                <p class="text-center" id="description-text">Please wait while we translate your text.</p>
             </div>
 
             <div class="mt-4 form-box">
@@ -208,6 +208,9 @@
                 document.getElementById('results').style.display = 'none';
                 document.getElementById('status-container').style.display = 'none';
                 document.getElementById('content-container').style.display = 'none';
+                document.getElementById('progress-text').textContent = `Translation in progress... \nTask ID is ${taskId}.`;
+                document.getElementById('description-text').textContent = `Please wait while we translate your text.`;
+
                 let translationResult = null;
                 let progress = 0;
 
@@ -217,6 +220,7 @@
                     translationResult = resultResponse.data;
                     if (translationResult.status === 'completed') {
                         progress = 100;
+                        document.getElementById('description-text').textContent = `Translation completed for Task ID: ${taskId}`;
                     } else {
                         progressBar.style.width = `50%`;
                     }
