@@ -135,13 +135,15 @@
             </div>
             <div class="mt-4" id="results" style="display: none;">
                 <h3>Translation Results</h3>
-                <pre id="translationResults"></pre> <!-- Required for the event driven arch. -->
+                <div id="translationResults" style="white-space: pre-wrap;"></div>
             </div>
 
             <div class="mt-4" id="progress-container">
                 <h4 id="progress-text" class="text-center">Translation in Progress...</h4>
                 <div class="progress" style="height: 16px;">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" id="progress-bar"
+                        role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                    </div>
                 </div>
                 <p class="text-center">Please wait while we translate your text.</p>
             </div>
@@ -158,7 +160,7 @@
 
             <div class="mt-4" id="status-container" style="display: none;">
                 <h4>Translation Status</h4>
-                <pre id="statusResult"></pre>
+                <div id="statusResult" style="white-space: pre-wrap;"></div>
             </div>
 
             <div class="mt-4" id="content-container" style="display: none;">
@@ -229,7 +231,7 @@
 
             } catch (error) {
                 console.error("Error submitting translation", error.response.data.detail.invalid_languages);
-                
+
                 if (error.response && error.response.status === 400) {
                     alert(`Error: Invalid languages - ${error.response.data.detail.invalid_languages}.`);
                 } else {
