@@ -8,9 +8,20 @@ This service is built using FastAPI and provides an API for translating text bet
 - Maintain a database of translation tasks to track their status and results.
 - Asynchronous translation processing with FastAPI for improved performance.
 
-## Demo
+## Images
 
-You can try out the Language Translator Service by visiting the [demo page](http://example.com/demo). The demo allows you to input text and select target languages for translation.
+**Tried Translations... & UI**
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    <img src="imgs/first.png" alt="Language Translator Service Demo 1" width="60%">
+   
+</div>
+<div>
+   <br>
+   <img src="imgs/second.png" alt="Language Translator Service Demo 2" width="40%">
+   &nbsp;
+   <img src="imgs/third.png" alt="Language Translator Service Demo 3" width="40%">
+</div>
 
 ## Components List
 
@@ -24,8 +35,8 @@ You can try out the Language Translator Service by visiting the [demo page](http
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/translator-service.git
-   cd translator-service
+   git clone https://github.com/DarkDk123/Lang-Translation-Service-FastAPI
+   cd Lang-Translation-Service-FastAPI
    ```
 
 2. **Set up a virtual environment**:
@@ -45,7 +56,7 @@ You can try out the Language Translator Service by visiting the [demo page](http
 5. **Run the FastAPI server**:
    ```bash
    cd app # go to app directory
-   uvicorn main:app
+   uvicorn main:app --port 8000
    ```
 
 6. **Access the service**:
