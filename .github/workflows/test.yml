@@ -1,0 +1,39 @@
+# Github Actions for testing code quality.
+
+name: test_linter_checks
+
+on: 
+    push:
+        branches: [main]
+    pull_request: # On all pull requests & direct pushes on main.
+
+jobs:
+  quality-assurance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Using marketplace action to checkout
+        with:
+            fetch-depth: 0 # All commits (beneficial when in a PR)
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+            python-version: '3.8'
+
+      - name: Install dependencies
+        run:
+            pip install uv
+            uv pip install -r requirements.txt # Using uv
+        
+      - name: Run Format check # It's generally not forced, but I will.
+        run: ruff format --check .
+        
+      - name: Run linter # For static errors
+        run: ruff check .
+
+
+    
+        
+        
