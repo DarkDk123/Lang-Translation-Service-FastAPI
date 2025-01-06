@@ -62,7 +62,6 @@ def update_translation_task(
     if not rows:
         raise Exception("Updating a task that doesn't Exists!!")
 
-    
     task = rows[0]
     task.translation = translations
     task.status = "completed"

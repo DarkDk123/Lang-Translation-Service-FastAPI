@@ -20,7 +20,9 @@ load_dotenv()
 
 # Create DataBase Engine
 # Manages connection to the DB
-SQLALCHEMY_DB_URL = os.getenv("SQLALCHEMY_DB_URL", "")
+SQLALCHEMY_DB_URL = os.getenv(
+    "SQLALCHEMY_DB_URL", "sqlite:///temp_sqlite.db"
+)  # Updated default database
 engine = create_engine(SQLALCHEMY_DB_URL)
 
 

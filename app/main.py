@@ -61,7 +61,6 @@ async def translate(
     dbSession: Annotated[Session, Depends(get_db)],
     bg_tasks: BackgroundTasks,
 ):
-
     # Convert languages to lowercase
     request.languages = [lang.lower() for lang in request.languages]
 
