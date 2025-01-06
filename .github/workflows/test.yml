@@ -23,10 +23,11 @@ jobs:
             python-version: '3.8'
 
       - name: Install dependencies
-        run:
+        run: |
             pip install uv
-            uv pip install -r requirements.txt # Using uv
-        
+            uv pip install -r requirements.txt
+        # Using uv
+
       - name: Run Format check # It's generally not forced, but I will.
         run: ruff format --check .
         
