@@ -20,20 +20,26 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with:
-            python-version: '3.8'
+            python-version: '3.9'
 
       - name: Install dependencies
-        run:
+      
+        run: |
             pip install uv
-            uv pip install -r requirements.txt # Using uv
-        
+            uv venv .venv
+            uv pip install -r requirements.txt
+        # Using uv
+        # This is a workaround for the issue with UV not being compatible as global environment
+        # Instead of activating venv, using tools directly from .venv/bin
+
+
       - name: Run Format check # It's generally not forced, but I will.
-        run: ruff format --check .
+        run: .venv/bin/ruff format --check .
         
       - name: Run linter # For static errors
-        run: ruff check .
+        run: .venv/bin/ruff check .
 
 
     
         
-        
+   
